@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphing Covid19 Malaysia</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+</head>
+
+<h1>COVID 19 Malaysia Tracker</h1>
+
+<body>
+
+    <canvas id="chart" width="400" height="200"></canvas>
+
+    <script>
+        // Data from https://github.com/iamsyahirah/covid-19-malaysia
+
+        chartIt();
+
+        async function chartIt() {
+            const data = await getData();
+            const ctx = document.getElementById('chart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.date,
+                    datasets: [{
+                            label: 'Cases',
+                            data: data.cases,
+                            fill: false,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 1)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                            ],
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Discharged',
+                            data: data.discharged,
+                            fill: false,
+                            backgroundColor: [
+                                'rgba(99, 132, 255, 1)',
+                            ],
+                            borderColor: [
+                                'rgba(99, 132, 255, 0.5)',
+                            ],
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Death',
+                            data: data.death,
+                            fill: false,
+                            backgroundColor: [
+                                'rgba(99, 255, 132, 1)',
+                            ],
+                            borderColor: [
+                                'rgba(99, 255, 132, 0.5)',
+                            ],
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    
+                }
+            });
+
+        }
+
+        async function getData() {
+            // const response = await fetch('test.csv');
+            const response = await fetch('covid19malaysia.csv');
+            const data = await response.text();
+            const date = [];
+            const cases = [];
+            const discharged = [];
+            const death = [];
+            const table = data.split('\n').slice(1);
+            table.forEach(row => {
+                const columns = row.split(',');
+                date.push(columns[0]);
+                cases.push(columns[1]);
+                discharged.push(columns[2]);
+                death.push(columns[3]);
+
+            });
+            return {
+                date,
+                cases,
+                discharged,
+                death,
+
+            };
+        }
+    </script>
+
+</body>
+
+</html>
